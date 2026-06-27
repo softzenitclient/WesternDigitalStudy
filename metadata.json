@@ -1,0 +1,6 @@
+{
+  "name": "Western Study",
+  "description": "Western Study - Better Education Develops the Nation. Your ultimate partner for studying abroad in Australia, Canada, New Zealand, UK, and USA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
