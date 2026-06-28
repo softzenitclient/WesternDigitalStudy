@@ -63,6 +63,7 @@ export function SheetDataProvider({ children }) {
   const [stats, setStats] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [news, setNews] = useState([]);
+  const [addressDetails, setAddressDetails] = useState([]);
   const [successStories, setSuccessStories] = useState([]);
   const [countryPages, setCountryPages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -102,6 +103,7 @@ export function SheetDataProvider({ children }) {
           rawNews,
           rawCountryPages,
           rawSuccessStories,
+          rawAddressDetails,
         ] = await Promise.all([
           fetchCSV("0").catch((err) => {
             console.error("Error fetching slides:", err);
@@ -132,6 +134,10 @@ export function SheetDataProvider({ children }) {
             return null;
           }),
           fetchCSV("2074003284").catch((err) => {
+            console.error("Error fetching successStories:", err);
+            return null;
+          }),
+          fetchCSV("1184408471").catch((err) => {
             console.error("Error fetching successStories:", err);
             return null;
           }),
@@ -281,7 +287,22 @@ export function SheetDataProvider({ children }) {
             setTestimonials(parsedTestimonials);
           }
         }
-
+        // Process Address Details
+        if (rawAddressDetails && rawAddressDetails.length > 0) {
+          const parsedAddressDetails = rawAddressDetails
+            .map((row) => {
+              return {
+                id: parseInt(row.id || 10),
+                addressDetails: row.addressDetails || "",
+                contact: row.contact || "",
+                email: row.email || "",
+              };
+            })
+            .filter((addr) => addr.addressDetails);
+          if (parsedAddressDetails.length > 0) {
+            setAddressDetails(parsedAddressDetails);
+          }
+        }
         // Process News/Blogs GID: 116671510
         if (rawNews && rawNews.length > 0) {
           const parsedNews = rawNews
@@ -420,6 +441,7 @@ export function SheetDataProvider({ children }) {
         news,
         countryPages,
         successStories,
+        addressDetails,
         loading,
         error,
       }}

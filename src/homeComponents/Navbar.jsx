@@ -1,30 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, Menu, X, Phone, Mail, Clock, ShieldCheck } from 'lucide-react';
-import Logo from './Logo';
-import { useSheetData } from '../context/SheetDataContext';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  ChevronDown,
+  Menu,
+  X,
+  Phone,
+  Mail,
+  Clock,
+  ShieldCheck,
+} from "lucide-react";
+import Logo from "./Logo";
+import { useSheetData } from "../context/SheetDataContext";
 
 const FLAG_MAP = {
-  'australia': '🇦🇺',
-  'canada': '🇨🇦',
-  'new zealand': '🇳🇿',
-  'uk': '🇬🇧',
-  'usa': '🇺🇸',
-  'united kingdom': '🇬🇧',
-  'united states': '🇺🇸',
-  'greece': '🇬🇷',
-  'hungary': '🇭🇺',
-  'italy': '🇮🇹',
-  'malaysia': '🇲🇾',
-  'malta': '🇲🇹',
-  'netherlands': '🇳🇱',
-  'south korea': '🇰🇷',
-  'sweden': '🇸🇪',
-  'germany': '🇩🇪',
-  'france': '🇫🇷',
-  'finland': '🇫🇮',
-  'cyprus': '🇨🇾',
-  'denmark': '🇩🇰'
+  australia: "🇦🇺",
+  canada: "🇨🇦",
+  "new zealand": "🇳🇿",
+  uk: "🇬🇧",
+  usa: "🇺🇸",
+  "united kingdom": "🇬🇧",
+  "united states": "🇺🇸",
+  greece: "🇬🇷",
+  hungary: "🇭🇺",
+  italy: "🇮🇹",
+  malaysia: "🇲🇾",
+  malta: "🇲🇹",
+  netherlands: "🇳🇱",
+  "south korea": "🇰🇷",
+  sweden: "🇸🇪",
+  germany: "🇩🇪",
+  france: "🇫🇷",
+  finland: "🇫🇮",
+  cyprus: "🇨🇾",
+  denmark: "🇩🇰",
 };
 
 export default function Navbar({ onApplyNowClick, onNavigate }) {
@@ -32,8 +40,13 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
   const [mobileCountryOpen, setMobileCountryOpen] = useState(false);
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { countryPages } = useSheetData();
+  const { countryPages, addressDetails } = useSheetData();
 
+  const dynamicContact = addressDetails?.[0] || {};
+  const emailText = dynamicContact.email;
+
+  const rawPhone = dynamicContact.contact;
+  const phoneText = rawPhone?.replace(/"/g, "").trim();
   // Handle scroll to change nav style
   useEffect(() => {
     const handleScroll = () => {
@@ -43,17 +56,17 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
         setScrolled(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const menuItems = [
-    { label: 'Home', id: 'home' },
-    { label: 'Country', id: 'country' },
-    { label: 'Service', id: 'service' },
-    { label: 'About', id: 'about' },
-    { label: 'Blog', id: 'blog' },
-    { label: 'Contact Us', id: 'contact' }
+    { label: "Home", id: "home" },
+    { label: "Country", id: "country" },
+    { label: "Service", id: "service" },
+    { label: "About", id: "about" },
+    { label: "Blog", id: "blog" },
+    { label: "Contact Us", id: "contact" },
   ];
 
   const handleMenuClick = (item) => {
@@ -68,61 +81,57 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
         <div className="flex items-center gap-6">
           <span className="flex items-center gap-1.5 hover:text-[#f15b24] transition-colors cursor-pointer">
             <Phone size={13} className="text-[#f15b24]" />
-            <span>+880 1711-223344</span>
+            <span>{phoneText}</span>
           </span>
           <span className="hidden sm:flex items-center gap-1.5 hover:text-[#f15b24] transition-colors cursor-pointer">
             <Mail size={13} className="text-[#f15b24]" />
-            <span>info@westernstudy.com</span>
+            <span>{emailText}</span>
           </span>
         </div>
         <div className="flex items-center gap-4">
           <span className="hidden md:flex items-center gap-1.5 text-gray-300">
             <Clock size={13} />
-            <span>Sat - Thu: 9:30 AM - 6:30 PM</span>
+            <span>Sat - Thu: 10:00 AM - 7:00 PM</span>
           </span>
-          <div className="flex items-center gap-1 bg-[#f15b24] px-2.5 py-0.5 rounded-full font-medium text-[10px]">
-            <ShieldCheck size={11} />
-            <span>Govt Approved Agency (RL-1950)</span>
-          </div>
         </div>
       </div>
 
       {/* Main Navbar */}
-      <nav 
+      <nav
         id="navbar-container"
         className={`w-full transition-all duration-300 py-3 px-4 md:px-12 ${
-          scrolled 
-            ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100' 
-            : 'bg-white shadow-sm border-b border-gray-100'
+          scrolled
+            ? "bg-white/95 backdrop-blur-md shadow-md border-b border-gray-100"
+            : "bg-white shadow-sm border-b border-gray-100"
         }`}
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           {/* Logo */}
-          <div 
-            className="cursor-pointer"
-            onClick={() => onNavigate('home')}
-          >
+          <div className="cursor-pointer" onClick={() => onNavigate("home")}>
             <Logo className="h-12 md:h-14" />
           </div>
 
           {/* Desktop Nav Items */}
           <div className="hidden lg:flex items-center gap-8">
             {menuItems.map((item) => {
-              if (item.id === 'country') {
+              if (item.id === "country") {
                 return (
-                  <div 
-                    key={item.id} 
+                  <div
+                    key={item.id}
                     className="relative py-2"
                     onMouseEnter={() => setCountryDropdownOpen(true)}
                     onMouseLeave={() => setCountryDropdownOpen(false)}
                   >
                     <button
                       id={`nav-item-${item.id}`}
-                      onClick={() => onNavigate('country')}
+                      onClick={() => onNavigate("country")}
                       className="flex items-center gap-1 font-medium text-gray-700 hover:text-[#f15b24] transition-colors text-sm focus:outline-none cursor-pointer"
                     >
                       <span>{item.label}</span>
-                      <ChevronDown size={14} className={`transition-transform duration-200 ${countryDropdownOpen ? 'rotate-180' : ''}`} />
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform duration-200 ${countryDropdownOpen ? "rotate-180" : ""}`}
+                      />
                     </button>
 
                     {/* Country Submenu on Hover */}
@@ -141,7 +150,7 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
                             id="dropdown-our-partners"
                             onClick={() => {
                               setCountryDropdownOpen(false);
-                              onNavigate('/country');
+                              onNavigate("/country");
                             }}
                             className="w-full text-left px-4 py-3 text-xs text-[#2c3164] hover:bg-orange-50 hover:text-[#f15b24] border-b border-gray-55 transition-all flex items-center gap-3 font-extrabold cursor-pointer"
                           >
@@ -155,7 +164,7 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
                           {/* Dynamic lists of Countries */}
                           {countryPages.map((c) => {
                             const normalized = c.country.trim().toLowerCase();
-                            const slug = normalized.replace(/\s+/g, '-');
+                            const slug = normalized.replace(/\s+/g, "-");
                             return (
                               <button
                                 id={`dropdown-country-${slug}`}
@@ -178,10 +187,7 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
               }
 
               return (
-                <div 
-                  key={item.id} 
-                  className="relative"
-                >
+                <div key={item.id} className="relative">
                   <button
                     id={`nav-item-${item.id}`}
                     onClick={() => handleMenuClick(item)}
@@ -202,9 +208,13 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
               className="hidden sm:flex items-center gap-2 bg-[#f15b24] hover:bg-[#d6471c] text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md transition-all active:scale-95 duration-200 group cursor-pointer animate-none"
             >
               <span>Apply Now</span>
-              <motion.span 
+              <motion.span
                 animate={{ x: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 1.5,
+                  ease: "easeInOut",
+                }}
               >
                 &rarr;
               </motion.span>
@@ -227,7 +237,7 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
             <motion.div
               id="mobile-nav-panel"
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
+              animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
               className="lg:hidden w-full border-t border-gray-100 mt-2 bg-white overflow-hidden py-4 px-2"
@@ -235,18 +245,23 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
               <div className="flex flex-col gap-1">
                 {menuItems.map((item) => (
                   <div key={item.id} className="w-full">
-                    {item.id === 'country' ? (
+                    {item.id === "country" ? (
                       <div>
                         {/* Nested header for Country dropdown on mobile */}
                         <button
                           id={`mobile-nav-item-${item.id}`}
-                          onClick={() => setMobileCountryOpen(!mobileCountryOpen)}
+                          onClick={() =>
+                            setMobileCountryOpen(!mobileCountryOpen)
+                          }
                           className="w-full flex justify-between items-center text-left px-4 py-3 text-sm font-medium text-gray-850 hover:bg-orange-50 hover:text-[#f15b24] rounded-xl transition-all"
                         >
                           <span>{item.label}</span>
-                          <ChevronDown size={16} className={`transition-transform duration-200 ${mobileCountryOpen ? 'rotate-180' : ''}`} />
+                          <ChevronDown
+                            size={16}
+                            className={`transition-transform duration-200 ${mobileCountryOpen ? "rotate-180" : ""}`}
+                          />
                         </button>
-                        
+
                         {mobileCountryOpen && (
                           <div className="bg-slate-50 rounded-xl my-1 p-2 flex flex-col gap-1 border border-slate-100/70 ml-4">
                             {/* Our Partners mobile */}
@@ -254,7 +269,7 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
                               id="mobile-nav-our-partners"
                               onClick={() => {
                                 setMobileMenuOpen(false);
-                                onNavigate('/country');
+                                onNavigate("/country");
                               }}
                               className="text-left px-4 py-2.5 text-xs text-slate-800 hover:bg-orange-100 rounded-lg flex items-center gap-2.5 font-bold"
                             >
@@ -264,7 +279,7 @@ export default function Navbar({ onApplyNowClick, onNavigate }) {
                             {/* Dynamic lists of Countries mobile */}
                             {countryPages.map((c) => {
                               const normalized = c.country.trim().toLowerCase();
-                              const slug = normalized.replace(/\s+/g, '-');
+                              const slug = normalized.replace(/\s+/g, "-");
                               return (
                                 <button
                                   id={`mobile-dropdown-country-${slug}`}
