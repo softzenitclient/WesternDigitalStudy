@@ -1,17 +1,13 @@
-import React from "react";
-import Logo from "./Logo";
 import {
-  Phone,
+  Facebook,
+  Instagram,
   Mail,
   MapPin,
-  Facebook,
-  Linkedin,
+  Phone,
   Youtube,
-  Inbox,
-  Heart,
-  Instagram,
 } from "lucide-react";
 import { useSheetData } from "../context/SheetDataContext";
+import { Logo } from "./Logo";
 
 export default function Footer({ onNavigate }) {
   const { addressDetails } = useSheetData();

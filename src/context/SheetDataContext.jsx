@@ -66,6 +66,7 @@ export function SheetDataProvider({ children }) {
   const [addressDetails, setAddressDetails] = useState([]);
   const [successStories, setSuccessStories] = useState([]);
   const [countryPages, setCountryPages] = useState([]);
+  const [ceoImage, setCeoImage] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -104,6 +105,7 @@ export function SheetDataProvider({ children }) {
           rawCountryPages,
           rawSuccessStories,
           rawAddressDetails,
+          rawCeoImage,
         ] = await Promise.all([
           fetchCSV("0").catch((err) => {
             console.error("Error fetching slides:", err);
@@ -138,6 +140,10 @@ export function SheetDataProvider({ children }) {
             return null;
           }),
           fetchCSV("1184408471").catch((err) => {
+            console.error("Error fetching successStories:", err);
+            return null;
+          }),
+          fetchCSV("536140101").catch((err) => {
             console.error("Error fetching successStories:", err);
             return null;
           }),
@@ -363,7 +369,9 @@ export function SheetDataProvider({ children }) {
             setNews(parsedNews);
           }
         }
-
+        if (rawCeoImage) {
+          setCeoImage(rawCeoImage[0]?.image_Url);
+        }
         // Process CountryWise_Pages GID: 1310477678
         if (rawCountryPages && rawCountryPages.length > 0) {
           const parsedCountryPages = rawCountryPages
@@ -442,6 +450,7 @@ export function SheetDataProvider({ children }) {
         countryPages,
         successStories,
         addressDetails,
+        ceoImage,
         loading,
         error,
       }}

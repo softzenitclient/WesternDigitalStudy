@@ -1,16 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import {
-  ChevronDown,
-  Menu,
-  X,
-  Phone,
-  Mail,
-  Clock,
-  ShieldCheck,
-} from "lucide-react";
-import Logo from "./Logo";
+import { ChevronDown, Clock, Mail, Menu, Phone, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 import { useSheetData } from "../context/SheetDataContext";
+import { Logo } from "./Logo";
 
 const FLAG_MAP = {
   australia: "🇦🇺",

@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../homeComponents/Navbar';
-import Footer from '../homeComponents/Footer';
-import ContactModal from '../homeComponents/ContactModal';
+import { useEffect, useState } from "react";
+import ContactModal from "../homeComponents/ContactModal";
+import Footer from "../homeComponents/Footer";
+import Navbar from "../homeComponents/Navbar";
 
 // Import newly created about sub-components
-import AboutHero from '../aboutComponents/AboutHero';
-import HistoryTimeline from '../aboutComponents/HistoryTimeline';
-import MissionVision from '../aboutComponents/MissionVision';
-import SuccessStats from '../aboutComponents/SuccessStats';
-import CeoSection from '../aboutComponents/CeoSection';
+import AboutHero from "../aboutComponents/AboutHero";
+import CeoSection from "../aboutComponents/CeoSection";
+import HistoryTimeline from "../aboutComponents/HistoryTimeline";
+import MissionVision from "../aboutComponents/MissionVision";
+import SuccessStats from "../aboutComponents/SuccessStats";
 
 export default function AboutPage({ onNavigate }) {
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 
   const openModal = () => setIsApplyModalOpen(true);
@@ -22,13 +22,11 @@ export default function AboutPage({ onNavigate }) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-gray-800">
-      
       {/* Navigation Bar */}
       <Navbar onNavigate={onNavigate} onApplyNowClick={openModal} />
 
       {/* Main Content Sections */}
       <main className="flex-grow">
-        
         {/* 1. Page Header (Hero - Dynamic backdrop without human images) */}
         <AboutHero />
 
@@ -43,7 +41,6 @@ export default function AboutPage({ onNavigate }) {
 
         {/* 5. Executive desk and CEO statement */}
         <CeoSection />
-
       </main>
 
       {/* Footer view */}
@@ -51,7 +48,6 @@ export default function AboutPage({ onNavigate }) {
 
       {/* Interlink Contact Call Option Sheet */}
       <ContactModal isOpen={isApplyModalOpen} onClose={closeModal} />
-
     </div>
   );
 }

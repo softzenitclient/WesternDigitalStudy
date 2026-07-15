@@ -1,6 +1,7 @@
-import React from 'react';
+import React from "react";
+import { useSheetData } from "../context/SheetDataContext";
 
-export default function Logo({ className = "h-12", showText = true }) {
+export function Logo({ className = "h-12", showText = true }) {
   return (
     <div className={`flex items-center select-none ${className}`}>
       <img
@@ -12,4 +13,15 @@ export default function Logo({ className = "h-12", showText = true }) {
     </div>
   );
 }
-
+export function CeoImage() {
+  const { ceoImage } = useSheetData();
+  console.log(ceoImage);
+  return (
+    <img
+      src={ceoImage}
+      alt="Western Study Ceo Image"
+      referrerPolicy="no-referrer"
+      className="h-full w-auto object-contain rounded-lg"
+    />
+  );
+}
