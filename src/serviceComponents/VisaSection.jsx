@@ -1,15 +1,39 @@
 import React from 'react';
 import { Check, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useSheetData } from '../context/SheetDataContext';
 
 export default function VisaSection({ onApplyClick }) {
-  const checklist = [
-    "Provide a country-specific visa document checklist tailored to your destination",
-    "Review and verify all required documents for accuracy and compliance",
-    "Assist with financial documentation and visa file preparation",
-    "Conduct professional mock interview sessions and visa briefing",
-    "Guide you through biometric appointments and embassy procedures"
-  ];
+  const { servicesDetailedSections } = useSheetData();
+
+  const defaultHero = {
+    title: "Visa application Guidance",
+    description: "Receiving an offer letter is only the beginning of your study abroad journey. At Western Study, our experienced visa team provides end-to-end support to help students navigate the visa process confidently and successfully. We ensure your documentation is accurate, complete, and aligned with embassy and immigration requirements.",
+    bgImage: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1600&auto=format&fit=crop",
+    checklist: [
+      "Provide a country-specific visa document checklist tailored to your destination",
+      "Review and verify all required documents for accuracy and compliance",
+      "Assist with financial documentation and visa file preparation",
+      "Conduct professional mock interview sessions and visa briefing",
+      "Guide you through biometric appointments and embassy procedures"
+    ]
+  };
+
+  const sectionData = servicesDetailedSections?.find(s => s.sectionKey === 'visa') || defaultHero;
+
+  const renderTitle = () => {
+    if (sectionData.title.includes('\n')) {
+      return sectionData.title.split('\n').map((line, i) => (
+        <React.Fragment key={i}>
+          {line} {i === 0 && <br />}
+        </React.Fragment>
+      ));
+    }
+    if (sectionData.title.toLowerCase().includes('visa application')) {
+      return <>Visa application <br /> Guidance</>;
+    }
+    return sectionData.title;
+  };
 
   return (
     <section id="visa-guidance-section" className="py-16 bg-white">
@@ -17,16 +41,27 @@ export default function VisaSection({ onApplyClick }) {
         <div className="bg-white rounded-[32px] p-8 md:p-12 lg:p-16 border border-gray-100 shadow-xl overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            {/* Left side: Information and checklist */}
-            <div className="lg:col-span-12 lg:order-1 lg:col-start-1 lg:col-end-13 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-12 lg:col-start-1 lg:col-end-13 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               
-              <div className="lg:col-span-7 space-y-6 text-left">
+              {/* Left side: Visa application and passport closeup (Image) */}
+              <div className="lg:col-span-5 lg:order-1 relative w-full aspect-[4/3] lg:aspect-square">
+                <div className="absolute inset-x-0 bottom-0 top-6 bg-gradient-to-tr from-[#f15b24]/5 to-[#2c3164]/5 rounded-3xl rotate-2 scale-95" />
+                <img
+                  src={sectionData.bgImage}
+                  alt={sectionData.title}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover rounded-3xl shadow-xl border border-gray-100 relative z-10 transition-transform duration-500 hover:scale-[1.02]"
+                />
+              </div>
+
+              {/* Right side: Information and checklist (Text) */}
+              <div className="lg:col-span-7 lg:order-2 space-y-6 text-left">
                 <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-tight">
-                  Visa application <br /> Guidance
+                  {renderTitle()}
                 </h2>
 
                 <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                  Receiving an offer letter is only the beginning of your study abroad journey. At Western Study, our experienced visa team provides end-to-end support to help students navigate the visa process confidently and successfully. We ensure your documentation is accurate, complete, and aligned with embassy and immigration requirements.
+                  {sectionData.description}
                 </p>
 
                 {/* Badged title */}
@@ -37,7 +72,7 @@ export default function VisaSection({ onApplyClick }) {
 
                 {/* Checklist content */}
                 <ul className="space-y-3.5 text-xs md:text-sm text-gray-700">
-                  {checklist.map((item, index) => (
+                  {sectionData.checklist.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-orange-50 border border-orange-200 text-[#f15b24] flex items-center justify-center font-bold">
                         <Check size={12} strokeWidth={3} />
@@ -60,17 +95,6 @@ export default function VisaSection({ onApplyClick }) {
                     </span>
                   </button>
                 </div>
-              </div>
-
-              {/* Right side: Visa application and passport closeup */}
-              <div className="lg:col-span-5 relative w-full aspect-[4/3] lg:aspect-square">
-                <div className="absolute inset-x-0 bottom-0 top-6 bg-gradient-to-tr from-[#f15b24]/5 to-[#2c3164]/5 rounded-3xl rotate-2 scale-95" />
-                <img
-                  src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1600&auto=format&fit=crop"
-                  alt="Student Visa Application Passport Vetting"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover rounded-3xl shadow-xl border border-gray-100 relative z-10 transition-transform duration-500 hover:scale-[1.02]"
-                />
               </div>
 
             </div>

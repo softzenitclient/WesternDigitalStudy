@@ -67,6 +67,10 @@ export function SheetDataProvider({ children }) {
   const [successStories, setSuccessStories] = useState([]);
   const [countryPages, setCountryPages] = useState([]);
   const [ceoImage, setCeoImage] = useState();
+  const [ceoData, setCeoData] = useState(null);
+  const [servicesHero, setServicesHero] = useState([]);
+  const [servicesCounselling, setServicesCounselling] = useState([]);
+  const [servicesDetailedSections, setServicesDetailedSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -106,6 +110,9 @@ export function SheetDataProvider({ children }) {
           rawSuccessStories,
           rawAddressDetails,
           rawCeoImage,
+          rawServicesHero,
+          rawServicesCounselling,
+          rawServicesDetailedSections,
         ] = await Promise.all([
           fetchCSV("0").catch((err) => {
             console.error("Error fetching slides:", err);
@@ -145,6 +152,18 @@ export function SheetDataProvider({ children }) {
           }),
           fetchCSV("536140101").catch((err) => {
             console.error("Error fetching successStories:", err);
+            return null;
+          }),
+          fetchCSV("2018573685").catch((err) => {
+            console.error("Error fetching servicesHero:", err);
+            return null;
+          }),
+          fetchCSV("78813676").catch((err) => {
+            console.error("Error fetching servicesCounselling:", err);
+            return null;
+          }),
+          fetchCSV("1691454945").catch((err) => {
+            console.error("Error fetching servicesDetailedSections:", err);
             return null;
           }),
         ]);
@@ -369,8 +388,26 @@ export function SheetDataProvider({ children }) {
             setNews(parsedNews);
           }
         }
-        if (rawCeoImage) {
-          setCeoImage(rawCeoImage[0]?.image_Url);
+        if (rawCeoImage && rawCeoImage.length > 0) {
+          const row = rawCeoImage[0];
+          const imgUrl = sanitizeUrl(
+            row.image_Url || row.imageUrl || row.image || row.Image || ""
+          );
+          const parsedCeo = {
+            image: imgUrl,
+            name: row.name || row.Name || "",
+            title: row.title || row.Title || "",
+            subTitle: row.subTitle || row.subtitle || row.Company || row.company || "",
+            quote: row.quote || row.Quote || "",
+            messageP1: row.message_p1 || row.messageP1 || row.paragraph1 || row.message || "",
+            messageP2: row.message_p2 || row.messageP2 || row.paragraph2 || "",
+            experience: row.experience || row.Experience || "",
+            experienceLabel: row.experience_label || row.experienceLabel || "",
+          };
+          setCeoData(parsedCeo);
+          if (imgUrl) {
+            setCeoImage(imgUrl);
+          }
         }
         // Process CountryWise_Pages GID: 1310477678
         if (rawCountryPages && rawCountryPages.length > 0) {
@@ -427,6 +464,62 @@ export function SheetDataProvider({ children }) {
           }
         }
 
+        // Process Services Hero
+        if (rawServicesHero && rawServicesHero.length > 0) {
+          const parsedServicesHero = rawServicesHero
+            .map((row) => ({
+              badge: row.badge || row.Badge || "",
+              title1: row.title1 || row.Title1 || "",
+              title2: row.title2 || row.Title2 || "",
+              bgImage: sanitizeUrl(row.bgImage || row.BgImage || row.image || row.Image || ""),
+            }))
+            .filter((h) => h.title1 || h.title2);
+
+          if (parsedServicesHero.length > 0) {
+            setServicesHero(parsedServicesHero);
+          }
+        }
+
+        // Process Services Counselling Cards
+        if (rawServicesCounselling && rawServicesCounselling.length > 0) {
+          const parsedCounselling = rawServicesCounselling
+            .map((row) => ({
+              id: row.id || row.ID || "",
+              title: row.title || row.Title || "",
+              desc: row.desc || row.Description || row.description || "",
+              icon: row.icon || row.Icon || "Compass",
+            }))
+            .filter((c) => c.title);
+
+          if (parsedCounselling.length > 0) {
+            setServicesCounselling(parsedCounselling);
+          }
+        }
+
+        // Process Services Detailed Sections (Application, Visa, Accommodation, Pre-Departure)
+        if (rawServicesDetailedSections && rawServicesDetailedSections.length > 0) {
+          const parsedDetailedSections = rawServicesDetailedSections
+            .map((row) => {
+              const rawChecklist = row.checklist || row.Checklist || "";
+              const checklistArray = rawChecklist
+                ? rawChecklist.split(/[|\n]+/).map((item) => item.trim()).filter(Boolean)
+                : [];
+              
+              return {
+                sectionKey: (row.sectionKey || row.SectionKey || "").trim().toLowerCase(),
+                title: row.title || row.Title || "",
+                description: row.description || row.Description || row.desc || "",
+                bgImage: sanitizeUrl(row.bgImage || row.BgImage || row.image || row.Image || ""),
+                checklist: checklistArray,
+              };
+            })
+            .filter((s) => s.sectionKey && s.title);
+
+          if (parsedDetailedSections.length > 0) {
+            setServicesDetailedSections(parsedDetailedSections);
+          }
+        }
+
         setLoading(false);
       } catch (err) {
         console.error("Failed to load Google Sheets dynamic data:", err);
@@ -451,6 +544,10 @@ export function SheetDataProvider({ children }) {
         successStories,
         addressDetails,
         ceoImage,
+        ceoData,
+        servicesHero,
+        servicesCounselling,
+        servicesDetailedSections,
         loading,
         error,
       }}

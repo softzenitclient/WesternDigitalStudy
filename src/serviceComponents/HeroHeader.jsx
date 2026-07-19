@@ -1,14 +1,28 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useSheetData } from '../context/SheetDataContext';
 
 export default function HeroHeader() {
+  const { servicesHero } = useSheetData();
+
+  // Fallback default values in case Google Sheet fetch fails or hasn't loaded yet
+  const defaultHero = {
+    badge: "Services",
+    title1: "Services for",
+    title2: "students",
+    bgImage: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1600&auto=format&fit=crop"
+  };
+
+  // If we have servicesHero data from the sheet, use the first row. Otherwise, fallback to defaults.
+  const hero = servicesHero && servicesHero.length > 0 ? servicesHero[0] : defaultHero;
+
   return (
     <section className="pt-32 pb-8 bg-slate-50 relative">
       <div className="max-w-7xl mx-auto px-4 md:px-12">
         <div 
           className="relative min-h-[250px] md:min-h-[380px] rounded-[36px] overflow-hidden flex flex-col justify-end p-8 md:p-16 text-white shadow-2xl"
           style={{
-            backgroundImage: `linear-gradient(to top, rgba(16, 24, 40, 0.8) 0%, rgba(16, 24, 40, 0.25) 60%, rgba(16, 40, 75, 0.15) 100%), url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1600&auto=format&fit=crop')`,
+            backgroundImage: `linear-gradient(to top, rgba(16, 24, 40, 0.8) 0%, rgba(16, 24, 40, 0.25) 60%, rgba(16, 40, 75, 0.15) 100%), url('${hero.bgImage}')`,
             backgroundPosition: 'center 40%',
             backgroundSize: 'cover'
           }}
@@ -24,7 +38,7 @@ export default function HeroHeader() {
               className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider w-fit"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-              <span>Services</span>
+              <span>{hero.badge}</span>
             </motion.div>
 
             <motion.h1
@@ -33,9 +47,9 @@ export default function HeroHeader() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight font-serif leading-[1.1]"
             >
-              Services for <br className="hidden md:block" />
+              {hero.title1} <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-[#f15b24] to-orange-300">
-                students
+                {hero.title2}
               </span>
             </motion.h1>
           </div>

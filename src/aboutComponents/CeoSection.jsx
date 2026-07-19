@@ -1,7 +1,26 @@
 import { Award, Building2, Quote, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 import { CeoImage } from "./../homeComponents/Logo";
+import { useSheetData } from "../context/SheetDataContext";
+
 export default function CeoSection() {
+  const { ceoData } = useSheetData();
+
+  const name = ceoData?.name || "Dr. Sayeed Hasan";
+  const title = ceoData?.title || "Founding Director & CEO";
+  const subTitle = ceoData?.subTitle || "Western Study Group";
+  const quote =
+    ceoData?.quote ||
+    `"Our vision has never been just about sending students abroad; it has always been about creating ethical, transparent pathways for the next generation of global leaders."`;
+  const messageP1 =
+    ceoData?.messageP1 ||
+    "Welcome to Western Study. For over a decade, we have dedicated ourselves to bridging the gap between local aspirations and global destinations. We recognize that choosing to study in a foreign land is not just an academic milestone—it is a life-defining transition requiring flawless execution and honest support.";
+  const messageP2 =
+    ceoData?.messageP2 ||
+    "The foundation of Western Study lies on unwavering trust, absolute transparency, and a student-centric advisory system. Our credentials as a licensed and government-approved recruitment agency represent our commitment to compliance and excellence. We do not engage in generic consulting; instead, we craft tailored plans matching your distinct profile directly with our vast, verified institutional networks.";
+  const experience = ceoData?.experience || "10+ Years";
+  const experienceLabel = ceoData?.experienceLabel || "Mentorship Legacy";
+
   return (
     <section
       id="ceo-message-section"
@@ -31,13 +50,13 @@ export default function CeoSection() {
               {/* Bottom Caption Overlay */}
               <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 text-white text-center">
                 <span className="text-[10px] tracking-wider uppercase font-semibold text-orange-400 bg-orange-950/45 px-3 py-1 rounded-full border border-orange-500/15 inline-block mb-1.5 backdrop-blur-sm">
-                  Founding Director & CEO
+                  {title}
                 </span>
                 <p className="text-xl font-extrabold font-serif tracking-tight">
-                  Dr. Sayeed Hasan
+                  {name}
                 </p>
                 <p className="text-xs text-slate-300 font-medium">
-                  Western Study Group
+                  {subTitle}
                 </p>
               </div>
             </div>
@@ -48,9 +67,9 @@ export default function CeoSection() {
                 <Award size={20} />
               </div>
               <div>
-                <p className="text-xs font-black text-[#2c3164]">10+ Years</p>
+                <p className="text-xs font-black text-[#2c3164]">{experience}</p>
                 <p className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">
-                  Mentorship Legacy
+                  {experienceLabel}
                 </p>
               </div>
             </div>
@@ -92,44 +111,27 @@ export default function CeoSection() {
               />
 
               <p className="text-[#2c3164] font-serif font-black text-lg md:text-xl leading-relaxed italic relative z-10">
-                "Our vision has never been just about sending students abroad;
-                it has always been about creating ethical, transparent pathways
-                for the next generation of global leaders."
+                {quote.startsWith('"') ? quote : `"${quote}"`}
               </p>
             </div>
 
             {/* Long message body */}
             <div className="space-y-4 text-gray-600 text-sm md:text-base leading-relaxed font-normal">
-              <p>
-                Welcome to Western Study. For over a decade, we have dedicated
-                ourselves to bridging the gap between local aspirations and
-                global destinations. We recognize that choosing to study in a
-                foreign land is not just an academic milestone—it is a
-                life-defining transition requiring flawless execution and honest
-                support.
-              </p>
-              <p>
-                The foundation of Western Study lies on unwavering trust,
-                absolute transparency, and a student-centric advisory system.
-                Our credentials as a licensed and government-approved
-                recruitment agency represent our commitment to compliance and
-                excellence. We do not engage in generic consulting; instead, we
-                craft tailored plans matching your distinct profile directly
-                with our vast, verified institutional networks.
-              </p>
+              {messageP1 && <p>{messageP1}</p>}
+              {messageP2 && <p>{messageP2}</p>}
             </div>
 
             {/* Sign-off & signature styling */}
             <div className="pt-6 border-t border-gray-150 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h4 className="text-lg font-extrabold text-[#2c3164] font-serif">
-                  Dr. Sayeed Hasan
+                  {name}
                 </h4>
                 <p className="text-xs text-[#f15b24] font-bold tracking-wider uppercase">
-                  Founder, Chairman & MD
+                  {title}
                 </p>
                 <p className="text-xs text-gray-400 font-medium">
-                  Western Study Group
+                  {subTitle}
                 </p>
               </div>
             </div>
@@ -139,3 +141,4 @@ export default function CeoSection() {
     </section>
   );
 }
+

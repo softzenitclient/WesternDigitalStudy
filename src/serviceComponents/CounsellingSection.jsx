@@ -1,34 +1,39 @@
 import React from 'react';
-import { Compass, GraduationCap, Award, Calculator } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { motion } from 'motion/react';
+import { useSheetData } from '../context/SheetDataContext';
 
 export default function CounsellingSection() {
-  const cards = [
+  const { servicesCounselling } = useSheetData();
+
+  const defaultCards = [
     {
       id: "001",
       title: "Academic Assessment",
       desc: "We carefully evaluate your academic qualifications, language proficiency, and career objectives to identify suitable study pathways aligned with your future ambitions.",
-      icon: Compass,
+      icon: "Compass",
     },
     {
       id: "002",
       title: "Choosing a Suitable University",
       desc: "Our counselors assist you in selecting the most suitable country, university, and study program based on your academic profile, preferences, and long-term career goals.",
-      icon: GraduationCap,
+      icon: "GraduationCap",
     },
     {
       id: "003",
       title: "Scholarship Opportunities",
       desc: "We help students explore and apply for available scholarships, tuition waivers, and financial aid opportunities offered by institutions.",
-      icon: Award,
+      icon: "Award",
     },
     {
       id: "004",
       title: "Financial Planning",
       desc: "We provide guidance on tuition fees, living expenses, and financial documentation requirements to help students prepare a realistic education budget.",
-      icon: Calculator,
+      icon: "Calculator",
     }
   ];
+
+  const cards = servicesCounselling && servicesCounselling.length > 0 ? servicesCounselling : defaultCards;
 
   return (
     <section id="student-counselling-section" className="pt-20 pb-28 bg-white">
@@ -57,7 +62,7 @@ export default function CounsellingSection() {
               At <span className="font-semibold text-gray-900">Western Study</span>, we simplify your study abroad journey through personalized counseling, expert guidance, and end-to-end support. Our mission is to empower students with accurate information and tailored advice to help them make informed decisions about their international education and future careers.
             </p>
             <p>
-              We proudly collaborate with 210+ universities and educational institutions across Hungary, Malta, Italy, Greece, Finland, Sweden, Canada, Netherlands, United   Kingdom, South Korea, Cyprus, and Malaysia, New Zealand, Denmark and others destinations. Our experienced counselors carefully evaluate each student's academic profile, career aspirations, financial capacity, and personal preferences to recommend the most suitable study destination, university, and program.
+              We proudly collaborate with 210+ universities and educational institutions across Hungary, Malta, Italy, Greece, Finland, Sweden, Canada, Netherlands, United Kingdom, South Korea, Cyprus, and Malaysia, New Zealand, Denmark and others destinations. Our experienced counselors carefully evaluate each student's academic profile, career aspirations, financial capacity, and personal preferences to recommend the most suitable study destination, university, and program.
             </p>
           </div>
 
@@ -66,11 +71,12 @@ export default function CounsellingSection() {
         {/* 4 Cards Grid Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
           {cards.map((card, idx) => {
-            const IconComponent = card.icon;
+            // Dynamically resolve Lucide Icon component
+            const IconComponent = LucideIcons[card.icon] || LucideIcons.Compass;
             return (
               <motion.div
-                key={card.id}
-                id={`counselling-card-${card.id}`}
+                key={card.id || idx}
+                id={`counselling-card-${card.id || idx}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
