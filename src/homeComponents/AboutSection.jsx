@@ -30,7 +30,7 @@ export default function AboutSection({ onApplyNowClick }) {
           </div>
 
           <div className="absolute -bottom-6 -right-6 bg-gradient-to-br from-[#2c3164] to-[#1e224e] text-white p-6 rounded-2xl shadow-xl border border-white/10 hidden sm:block">
-            <h4 className="text-4xl font-extrabold text-[#f15b24] font-mono">12+</h4>
+            <h4 className="text-4xl font-extrabold text-[#f15b24] font-mono">8+</h4>
             <p className="text-xs text-orange-100 font-bold tracking-wider uppercase mt-1">Years of Trust & Success</p>
           </div>
         </div>
