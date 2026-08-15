@@ -156,7 +156,7 @@ export default function SuccessStories({ onApplyNowClick }) {
               className="inline-flex items-center gap-2.5 px-5 py-3 bg-[#2c3164] hover:bg-[#1f2349] text-white rounded-2xl text-xs sm:text-sm font-bold shadow-md hover:shadow-xl hover:shadow-[#2c3164]/20 transition-all duration-300 cursor-pointer active:scale-95 group border border-[#2c3164]"
             >
               <Users size={16} className="text-[#f15b24] group-hover:scale-110 transition-transform duration-300" />
-              <span>See All ({allStories.length}) Stories</span>
+              <span>See All Stories</span>
               <ArrowUpRight size={15} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300 text-orange-400" />
             </button>
 
