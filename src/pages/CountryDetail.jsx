@@ -213,7 +213,7 @@ function YouTubeBackground({ videoId }) {
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         try {
           playerRef.current.destroy();
-        } catch (e) {}
+        } catch (e) { }
       }
 
       const playerDiv = document.createElement('div');
@@ -268,7 +268,7 @@ function YouTubeBackground({ videoId }) {
         if (playerRef.current && typeof playerRef.current.destroy === 'function') {
           try {
             playerRef.current.destroy();
-          } catch (e) {}
+          } catch (e) { }
         }
       };
     }
@@ -278,7 +278,7 @@ function YouTubeBackground({ videoId }) {
       if (playerRef.current && typeof playerRef.current.destroy === 'function') {
         try {
           playerRef.current.destroy();
-        } catch (e) {}
+        } catch (e) { }
       }
     };
   }, [videoId]);
@@ -311,7 +311,7 @@ function parseOverview(text) {
   if (!text) return { heading: 'About Higher Studies', description: '' };
   const headingMatch = text.match(/Heading:\s*(.*?)(?=\n|Description:|$)/i);
   const descMatch = text.match(/Description:\s*(.*)/is);
-  
+
   const heading = headingMatch ? headingMatch[1].trim() : 'About Higher Studies';
   let description = descMatch ? descMatch[1].trim() : text;
   if (!descMatch && headingMatch) {
@@ -324,26 +324,26 @@ function parseAdmissionProcess(text) {
   if (!text) return { heading: 'Admission Roadmap', steps: [] };
   const headingMatch = text.match(/Heading:\s*(.*?)(?=\n|Process:|$)/i);
   const heading = headingMatch ? headingMatch[1].trim() : 'Admission Roadmap';
-  
+
   let cleanText = text;
   if (headingMatch) {
     cleanText = text.replace(/Heading:\s*.*?(?=\n|$)/i, '');
   }
-  
+
   const stepRegex = /(?:\d+[\.\)]\s*)([^\n]+)/g;
   const steps = [];
   let match;
   while ((match = stepRegex.exec(cleanText)) !== null) {
     steps.push(match[1].trim());
   }
-  
+
   if (steps.length === 0) {
     const lines = cleanText.split('\n')
       .map(l => l.trim())
       .filter(l => l && !l.toLowerCase().startsWith('process:'));
     steps.push(...lines);
   }
-  
+
   return { heading, steps };
 }
 
@@ -351,7 +351,7 @@ function parseFAQ(text) {
   if (!text) return { heading: 'Frequently Asked Questions', qas: [] };
   const headingMatch = text.match(/Heading:\s*(.*?)(?=\n|Q:|$)/i);
   const heading = headingMatch ? headingMatch[1].trim() : 'Frequently Asked Questions';
-  
+
   const qas = [];
   const qaBlocks = text.split(/Q:/gi);
   qaBlocks.forEach(block => {
@@ -364,7 +364,7 @@ function parseFAQ(text) {
       }
     }
   });
-  
+
   return { heading, qas };
 }
 
@@ -377,7 +377,7 @@ export default function CountryDetail({ onNavigate }) {
   const [activeFaq, setActiveFaq] = useState(null);
   const [selectedUniversity, setSelectedUniversity] = useState(null);
   const [uniModalOpen, setUniModalOpen] = useState(false);
-  
+
   // HTML5 Video playback states
   const videoRef = useRef(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -496,14 +496,14 @@ export default function CountryDetail({ onNavigate }) {
       <Navbar onApplyNowClick={() => setModalOpen(true)} onNavigate={onNavigate} />
 
       {/* Hero Banner Section with Dynamic Background Video (YouTube or Direct Video) */}
-      <section 
-        className="pt-36 pb-20 md:pt-40 md:pb-24 min-h-[500px] md:min-h-[560px] lg:min-h-[600px] text-white relative overflow-hidden flex items-center" 
+      <section
+        className="pt-40 pb-28 md:pt-48 md:pb-36 min-h-[560px] md:min-h-[640px] lg:min-h-[680px] text-white relative overflow-hidden flex items-center"
         id="country-hero"
       >
         {/* Background Video & Image Layer */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none">
           {/* High-res Poster Fallback */}
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
             style={{ backgroundImage: `url('${posterImage}')` }}
           />
@@ -522,9 +522,8 @@ export default function CountryDetail({ onNavigate }) {
                 muted
                 playsInline
                 poster={posterImage}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                  videoLoaded ? 'opacity-100' : 'opacity-0'
-                }`}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${videoLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
                 onLoadedData={() => setVideoLoaded(true)}
                 onError={() => setVideoError(true)}
               >
@@ -572,7 +571,7 @@ export default function CountryDetail({ onNavigate }) {
 
       {/* Tabs and Details Area */}
       <main className="max-w-7xl mx-auto px-4 md:px-12 py-12 flex-1 w-full" id="country-tabs-tablist">
-        
+
         {/* Navigation Tabs */}
         <div className="flex border-b border-gray-200 mb-10 overflow-x-auto gap-4 md:gap-8 scrollbar-none">
           {tabsList.map((tab) => (
@@ -580,11 +579,10 @@ export default function CountryDetail({ onNavigate }) {
               id={`tab-select-${tab.id}`}
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-4 px-2 text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
-                activeTab === tab.id
+              className={`py-4 px-2 text-sm font-bold border-b-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === tab.id
                   ? 'border-[#f15b24] text-[#f15b24]'
                   : 'border-transparent text-gray-500 hover:text-slate-800'
-              }`}
+                }`}
             >
               {tab.label}
             </button>
@@ -665,8 +663,8 @@ export default function CountryDetail({ onNavigate }) {
                   <div className="space-y-4">
                     {parsedFaqBlock.qas.length > 0 ? (
                       parsedFaqBlock.qas.map((qa, index) => (
-                        <div 
-                          key={index} 
+                        <div
+                          key={index}
                           className="bg-slate-50 border border-slate-100/80 rounded-xl transition-all duration-200"
                         >
                           <button
@@ -674,9 +672,9 @@ export default function CountryDetail({ onNavigate }) {
                             className="w-full flex justify-between items-center text-left py-4 px-5 text-slate-800 font-bold text-sm cursor-pointer"
                           >
                             <span>{qa.question}</span>
-                            <ChevronDown 
-                              size={16} 
-                              className={`text-slate-400 transition-transform ${activeFaq === index ? 'rotate-180' : ''}`} 
+                            <ChevronDown
+                              size={16}
+                              className={`text-slate-400 transition-transform ${activeFaq === index ? 'rotate-180' : ''}`}
                             />
                           </button>
                           <AnimatePresence>
@@ -734,7 +732,7 @@ export default function CountryDetail({ onNavigate }) {
                         </div>
 
                         <div>
-                          <h4 
+                          <h4
                             onClick={() => {
                               setSelectedUniversity(uni);
                               setUniModalOpen(true);
