@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Facebook, 
@@ -21,7 +21,6 @@ import { DEFAULT_SUCCESS_STORIES } from '../data';
 
 export default function SuccessStories({ onApplyNowClick }) {
   const { successStories: SHEET_STORIES, loading } = useSheetData();
-  const sliderRef = useRef(null);
 
   // Combine live data with fallback defaults if sheet data is empty
   const allStories = useMemo(() => {
@@ -40,12 +39,11 @@ export default function SuccessStories({ onApplyNowClick }) {
     return ['All', ...Array.from(countries)];
   }, [allStories]);
 
-  // Section carousel state
+  // Carousel state
   const [selectedSectionCountry, setSelectedSectionCountry] = useState('All');
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(4);
 
   // "See All" modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,99 +74,49 @@ export default function SuccessStories({ onApplyNowClick }) {
     });
   }, [allStories, selectedModalCountry, searchQuery]);
 
-  // Update scroll navigation buttons & active index
-  const updateScrollState = useCallback(() => {
-    const slider = sliderRef.current;
-    if (!slider) return;
-
-    const { scrollLeft, scrollWidth, clientWidth } = slider;
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-
-    // Calculate approximate active card index
-    const cardWidth = slider.querySelector('[data-story-card]')?.offsetWidth || 300;
-    const gap = 24;
-    const newIndex = Math.round(scrollLeft / (cardWidth + gap));
-    setActiveIndex(Math.min(newIndex, Math.max(0, sectionStories.length - 1)));
-  }, [sectionStories.length]);
-
+  // Monitor viewport size to adjust visible counts dynamically
   useEffect(() => {
-    const slider = sliderRef.current;
-    if (!slider) return;
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2);
+      } else if (window.innerWidth < 1280) {
+        setVisibleCount(3);
+      } else {
+        setVisibleCount(4);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-    slider.addEventListener('scroll', updateScrollState, { passive: true });
-    updateScrollState();
-    return () => slider.removeEventListener('scroll', updateScrollState);
-  }, [updateScrollState, sectionStories]);
+  const maxIndex = Math.max(0, sectionStories.length - visibleCount);
 
-  // Reset scroll position when country tab changes
+  // Reset index if out of bounds or when country tab changes
   useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-      setActiveIndex(0);
-    }
-  }, [selectedSectionCountry]);
-
-  // Smooth slide by single card or page
-  const scrollToCard = (index) => {
-    const slider = sliderRef.current;
-    if (!slider) return;
-
-    const card = slider.querySelector('[data-story-card]');
-    if (!card) return;
-
-    const cardWidth = card.offsetWidth;
-    const gap = 24;
-    const targetLeft = index * (cardWidth + gap);
-
-    slider.scrollTo({
-      left: targetLeft,
-      behavior: 'smooth'
-    });
-  };
+    setCurrentIndex(0);
+  }, [selectedSectionCountry, visibleCount]);
 
   const handleNext = () => {
-    const slider = sliderRef.current;
-    if (!slider) return;
-
-    const card = slider.querySelector('[data-story-card]');
-    const scrollAmount = card ? card.offsetWidth + 24 : 320;
-
-    if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth - 20) {
-      // Loop to beginning smoothly
-      slider.scrollTo({ left: 0, behavior: 'smooth' });
-    } else {
-      slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+    setCurrentIndex(prev => (prev >= maxIndex ? 0 : prev + 1));
   };
 
   const handlePrev = () => {
-    const slider = sliderRef.current;
-    if (!slider) return;
-
-    const card = slider.querySelector('[data-story-card]');
-    const scrollAmount = card ? card.offsetWidth + 24 : 320;
-
-    if (slider.scrollLeft <= 20) {
-      // Loop to end smoothly
-      slider.scrollTo({ left: slider.scrollWidth, behavior: 'smooth' });
-    } else {
-      slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-    }
+    setCurrentIndex(prev => (prev <= 0 ? maxIndex : prev - 1));
   };
 
-  // Auto-play slider with smooth scroll
+  // Smooth auto-slide timer with hover pause
   useEffect(() => {
-    if (isHovered || isModalOpen || sectionStories.length <= 1) return;
-
-    const interval = setInterval(() => {
+    if (isHovered || isModalOpen || sectionStories.length <= visibleCount) return;
+    const timer = setTimeout(() => {
       handleNext();
-    }, 4000);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, [currentIndex, isHovered, isModalOpen, visibleCount, sectionStories.length]);
 
-    return () => clearInterval(interval);
-  }, [isHovered, isModalOpen, sectionStories.length]);
-
-  // Lock body scroll when modal is open & listen for Escape key
+  // Lock body scroll only when modal is open
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
@@ -177,11 +125,11 @@ export default function SuccessStories({ onApplyNowClick }) {
       };
       window.addEventListener('keydown', handleKeyDown);
       return () => {
-        document.body.style.overflow = 'unset';
+        document.body.style.overflow = '';
         window.removeEventListener('keydown', handleKeyDown);
       };
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
   }, [isModalOpen]);
 
@@ -198,7 +146,7 @@ export default function SuccessStories({ onApplyNowClick }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Decorative Gradient Background Blur */}
+      {/* Decorative Glow Elements */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#2c3164]/5 rounded-full filter blur-3xl pointer-events-none -z-10" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#f15b24]/5 rounded-full filter blur-3xl pointer-events-none -z-10" />
 
@@ -237,7 +185,7 @@ export default function SuccessStories({ onApplyNowClick }) {
             </button>
 
             {/* Slider Navigation Arrows */}
-            {sectionStories.length > 1 && (
+            {sectionStories.length > visibleCount && (
               <div className="flex items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-gray-200/80 shadow-xs">
                 <button
                   id="success-slide-prev-btn"
@@ -265,7 +213,7 @@ export default function SuccessStories({ onApplyNowClick }) {
 
         {/* Smooth Country Filter Tabs */}
         {availableCountries.length > 2 && (
-          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 no-scrollbar scroll-smooth">
+          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 no-scrollbar">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1 hidden sm:inline-flex items-center gap-1">
               <Filter size={12} /> Filter:
             </span>
@@ -298,8 +246,8 @@ export default function SuccessStories({ onApplyNowClick }) {
           </div>
         )}
 
-        {/* Native GPU-Accelerated Smooth Scroll Slider Track */}
-        <div className="relative -mx-4 px-4 py-2">
+        {/* Hardware-Accelerated Sliding Viewport */}
+        <div className="overflow-hidden relative -mx-4 px-4 py-2">
           {loading ? (
             /* Skeleton Loading Grid */
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -329,20 +277,21 @@ export default function SuccessStories({ onApplyNowClick }) {
             </div>
           ) : (
             <div
-              ref={sliderRef}
-              className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar py-3 px-1"
+              className="flex gap-6 will-change-transform"
               style={{
-                WebkitOverflowScrolling: 'touch',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
+                transform: `translateX(calc(-${currentIndex * (100 / visibleCount)}% - ${currentIndex * 24}px))`,
+                transition: 'transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)'
               }}
             >
               {sectionStories.map((student, idx) => (
                 <div
-                  data-story-card
                   id={`success-story-card-${student.id || idx}`}
                   key={student.id || idx}
-                  className="snap-start snap-always shrink-0 w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(25%-18px)] bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-orange-200/80 hover:-translate-y-1.5 transition-all duration-300 flex flex-col h-full group pb-2 relative select-none"
+                  className="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-orange-200/80 transition-all duration-300 flex flex-col h-full group pb-2 relative select-none"
+                  style={{ 
+                    width: `calc(${100 / visibleCount}% - ${(24 * (visibleCount - 1)) / visibleCount}px)`,
+                    flexShrink: 0
+                  }}
                 >
                   {/* Student Image Banner with Visa Badge */}
                   <div className="aspect-[4/3] w-full overflow-hidden relative bg-slate-100 rounded-t-3xl">
@@ -416,19 +365,19 @@ export default function SuccessStories({ onApplyNowClick }) {
         </div>
 
         {/* Carousel Pagination Progress Dots */}
-        {!loading && sectionStories.length > 1 && (
+        {!loading && sectionStories.length > visibleCount && (
           <div className="flex items-center justify-center gap-2 mt-8">
-            {sectionStories.map((_, idx) => (
+            {Array.from({ length: sectionStories.length - visibleCount + 1 }).map((_, idx) => (
               <button
                 key={idx}
                 id={`story-dot-${idx}`}
-                onClick={() => scrollToCard(idx)}
+                onClick={() => setCurrentIndex(idx)}
                 className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  activeIndex === idx 
+                  currentIndex === idx 
                     ? 'w-7 bg-[#f15b24]' 
                     : 'w-2.5 bg-gray-300 hover:bg-gray-400'
                 }`}
-                aria-label={`Scroll to student story ${idx + 1}`}
+                aria-label={`Go to slide ${idx + 1}`}
               />
             ))}
           </div>
@@ -447,7 +396,7 @@ export default function SuccessStories({ onApplyNowClick }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
               onClick={() => setIsModalOpen(false)}
               className="fixed inset-0 bg-slate-950/75 backdrop-blur-md"
             />
@@ -457,7 +406,7 @@ export default function SuccessStories({ onApplyNowClick }) {
               initial={{ opacity: 0, scale: 0.96, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 16 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               className="relative w-full max-w-6xl max-h-[92vh] bg-white rounded-3xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden z-10"
               onClick={(e) => e.stopPropagation()}
             >
@@ -524,7 +473,7 @@ export default function SuccessStories({ onApplyNowClick }) {
                         <button
                           key={`modal-filter-${country}`}
                           onClick={() => setSelectedModalCountry(country)}
-                          className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                          className={`px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
                             isSelected
                               ? 'bg-[#2c3164] text-white shadow-xs font-bold'
                               : 'bg-white text-gray-600 border border-gray-200 hover:border-orange-200 hover:text-[#f15b24]'
@@ -544,7 +493,7 @@ export default function SuccessStories({ onApplyNowClick }) {
               </div>
 
               {/* Modal Scrollable Body Grid */}
-              <div className="p-6 sm:p-8 overflow-y-auto flex-1 custom-scrollbar scroll-smooth overscroll-contain">
+              <div className="p-6 sm:p-8 overflow-y-auto flex-1 custom-scrollbar">
                 {modalStories.length === 0 ? (
                   <div className="text-center py-16 space-y-3">
                     <div className="w-16 h-16 mx-auto bg-orange-50 rounded-full flex items-center justify-center text-[#f15b24]">

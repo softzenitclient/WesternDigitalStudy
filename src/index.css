@@ -19,7 +19,6 @@
 
 html, body {
   font-family: "Lexend", ui-sans-serif, system-ui, sans-serif;
-  scroll-behavior: smooth;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

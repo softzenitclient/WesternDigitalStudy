@@ -96,7 +96,7 @@ export default function Home({ onNavigate }) {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-800 font-sans selection:bg-[#f15b24]/30 selection:text-gray-900 scroll-smooth antialiased">
+    <div className="min-h-screen bg-white text-gray-800 font-sans selection:bg-[#f15b24]/30 selection:text-gray-900 antialiased">
       {/* 1. Navbar */}
       <Navbar onApplyNowClick={handleApplyNowClick} onNavigate={handleNavigation} />
 
