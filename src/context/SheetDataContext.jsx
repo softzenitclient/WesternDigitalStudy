@@ -423,6 +423,24 @@ export function SheetDataProvider({ children }) {
                   row.admission_process ||
                   "",
                 faq: row.FAQ || row.faq || "",
+                videoUrl: sanitizeUrl(
+                  row.videoUrl ||
+                    row.video ||
+                    row.bgVideo ||
+                    row.Video ||
+                    row.video_url ||
+                    row["Video URL"] ||
+                    row["Background Video"] ||
+                    ""
+                ),
+                bgImage: sanitizeUrl(
+                  row.bgImage ||
+                    row.image ||
+                    row.Image ||
+                    row.imageUrl ||
+                    row["Image URL"] ||
+                    ""
+                ),
               };
             })
             .filter((c) => c.country);
