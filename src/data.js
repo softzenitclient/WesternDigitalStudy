@@ -623,3 +623,70 @@ export const TEAM_MEMBERS = [
   }
 ];
 
+export const DEFAULT_SUCCESS_STORIES = [
+  {
+    id: 1,
+    name: "Tanvir Hasan",
+    country: "Australia",
+    university: "University of Melbourne",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop",
+    fbLink: "https://www.facebook.com/westernstudy/reviews"
+  },
+  {
+    id: 2,
+    name: "Nusrat Jahan",
+    country: "Canada",
+    university: "University of Alberta",
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=600&auto=format&fit=crop",
+    fbLink: "https://www.facebook.com/westernstudy/reviews"
+  },
+  {
+    id: 3,
+    name: "Rakibul Islam",
+    country: "UK",
+    university: "University of Manchester",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop",
+    fbLink: "https://www.facebook.com/westernstudy/reviews"
+  },
+  {
+    id: 4,
+    name: "Sadia Rahman",
+    country: "USA",
+    university: "University of Texas at Arlington",
+    image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=600&auto=format&fit=crop",
+    fbLink: "https://www.facebook.com/westernstudy/reviews"
+  },
+  {
+    id: 5,
+    name: "Mahmudul Haque",
+    country: "New Zealand",
+    university: "University of Auckland",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop",
+    fbLink: "https://www.facebook.com/westernstudy/reviews"
+  },
+  {
+    id: 6,
+    name: "Farhana Akter",
+    country: "Canada",
+    university: "York University",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop",
+    fbLink: "https://www.facebook.com/westernstudy/reviews"
+  },
+  {
+    id: 7,
+    name: "Ahsan Habib",
+    country: "Australia",
+    university: "Monash University",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=600&auto=format&fit=crop",
+    fbLink: "https://www.facebook.com/westernstudy/reviews"
+  },
+  {
+    id: 8,
+    name: "Mehnaz Chowdhury",
+    country: "UK",
+    university: "University of Birmingham",
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop",
+    fbLink: "https://www.facebook.com/westernstudy/reviews"
+  }
+];
+

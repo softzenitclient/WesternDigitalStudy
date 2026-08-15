@@ -109,7 +109,7 @@ export default function Home({ onNavigate }) {
         <AboutSection onApplyNowClick={handleApplyNowClick} />
 
         {/* 3.5. Student Success Section */}
-        <SuccessStories />
+        <SuccessStories onApplyNowClick={handleApplyNowClick} />
 
         {/* 4. Service of Student Section */}
         <ServicesSection onApplyNowClick={handleApplyNowClick} />
