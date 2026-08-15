@@ -188,120 +188,34 @@ function extractYouTubeId(url) {
   return null;
 }
 
-// Background YouTube Player with 0 controls & programmatic looping to eliminate [<<] [||] [>>] buttons
+// Background YouTube Player with 0 controls, no playlist UI, and smooth fade-in
 function YouTubeBackground({ videoId }) {
-  const containerRef = useRef(null);
-  const playerRef = useRef(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!videoId) return;
-
-    let isMounted = true;
-
-    // Load YouTube API script once
-    if (!window.YT) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
-
-    const initPlayer = () => {
-      if (!window.YT || !window.YT.Player || !containerRef.current) return;
-
-      // Clean existing player if any
-      if (playerRef.current && typeof playerRef.current.destroy === 'function') {
-        try {
-          playerRef.current.destroy();
-        } catch (e) { }
-      }
-
-      const playerDiv = document.createElement('div');
-      containerRef.current.innerHTML = '';
-      containerRef.current.appendChild(playerDiv);
-
-      playerRef.current = new window.YT.Player(playerDiv, {
-        videoId: videoId,
-        playerVars: {
-          autoplay: 1,
-          mute: 1,
-          controls: 0,
-          showinfo: 0,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-          iv_load_policy: 3,
-          disablekb: 1,
-          fs: 0,
-          autohide: 1
-        },
-        events: {
-          onReady: (event) => {
-            if (!isMounted) return;
-            event.target.mute();
-            event.target.playVideo();
-          },
-          onStateChange: (event) => {
-            if (!isMounted) return;
-            // 0 = ENDED -> loop back to 0 without triggering playlist UI
-            if (event.data === 0) {
-              event.target.seekTo(0);
-              event.target.playVideo();
-            }
-          }
-        }
-      });
-    };
-
-    if (window.YT && window.YT.Player) {
-      initPlayer();
-    } else {
-      const timer = setInterval(() => {
-        if (window.YT && window.YT.Player) {
-          clearInterval(timer);
-          if (isMounted) initPlayer();
-        }
-      }, 150);
-      return () => {
-        clearInterval(timer);
-        isMounted = false;
-        if (playerRef.current && typeof playerRef.current.destroy === 'function') {
-          try {
-            playerRef.current.destroy();
-          } catch (e) { }
-        }
-      };
-    }
-
-    return () => {
-      isMounted = false;
-      if (playerRef.current && typeof playerRef.current.destroy === 'function') {
-        try {
-          playerRef.current.destroy();
-        } catch (e) { }
-      }
-    };
+    setReady(false);
+    const timer = setTimeout(() => {
+      setReady(true);
+    }, 400);
+    return () => clearTimeout(timer);
   }, [videoId]);
+
+  if (!videoId) return null;
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none z-0">
-      <div
-        ref={containerRef}
-        className="w-[300vw] h-[300vh] min-w-[100%] min-h-[100%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none aspect-video scale-135 md:scale-120 object-cover border-0 select-none [&_iframe]:w-full [&_iframe]:h-full [&_iframe]:pointer-events-none [&_iframe]:border-0"
-      >
-        {/* Instant fallback iframe without playlist param before API is ready */}
-        <iframe
-          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1&fs=0&autohide=1`}
-          title="Background Video"
-          tabIndex={-1}
-          aria-hidden="true"
-          className="w-full h-full pointer-events-none border-0"
-          style={{ pointerEvents: 'none' }}
-          allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
-        />
-      </div>
-      {/* Event shield */}
-      <div className="absolute inset-0 z-10 pointer-events-auto cursor-default" />
+      <iframe
+        key={videoId}
+        src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&playsinline=1&enablejsapi=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&fs=0`}
+        title="Background Video"
+        tabIndex={-1}
+        aria-hidden="true"
+        className={`w-[350vw] h-[350vh] min-w-[100%] min-h-[100%] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none aspect-video scale-135 md:scale-120 object-cover border-0 select-none transition-opacity duration-500 ${
+          ready ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{ pointerEvents: 'none' }}
+        allow="autoplay; encrypted-media; gyroscope; picture-in-picture"
+      />
     </div>
   );
 }
@@ -497,7 +411,7 @@ export default function CountryDetail({ onNavigate }) {
 
       {/* Hero Banner Section with Dynamic Background Video (YouTube or Direct Video) */}
       <section
-        className="pt-40 pb-28 md:pt-48 md:pb-36 min-h-[560px] md:min-h-[640px] lg:min-h-[680px] text-white relative overflow-hidden flex items-center"
+        className="h-[580px] md:h-[620px] lg:h-[650px] w-full text-white relative overflow-hidden flex items-center pt-16 md:pt-20"
         id="country-hero"
       >
         {/* Background Video & Image Layer */}
@@ -537,8 +451,8 @@ export default function CountryDetail({ onNavigate }) {
           <div className="absolute inset-0 bg-black/15" />
         </div>
 
-        {/* Content Container (Left-aligned matching reference image) */}
-        <div className="max-w-7xl mx-auto px-4 md:px-12 relative z-10 text-left w-full">
+        {/* Content Container (Left-aligned positioned more towards the left) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 relative z-10 text-left w-full">
           {/* Country Flag */}
           <div className="flex items-center gap-3 mb-5">
             {countryCode ? (
